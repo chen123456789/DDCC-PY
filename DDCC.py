@@ -1,18 +1,17 @@
 # coding=utf8
 import pandas as pd
 import numpy as np
-def DDCC_Proton(DoseType='Dose equivalent',QualityFactor='ICRP60',Geom='ISO',Organ='Thymus',Gender='Female'):
+def DDCC_Proton(QualityFactor='ICRP60',Geom='ISO',Organ='Thymus',Gender='Female'):
 
     xls = pd.ExcelFile("ICRP123/proton.xls")
     sheetX = xls.parse(0) #data
-    DoseTypes       = sheetX.ix[0:2,2]
+
     QualityFactors  = sheetX.ix[0:1,3]
     Geoms           = sheetX.ix[0:5,4]
     Organs          = sheetX.ix[0:30,5]
     Genders         = sheetX.ix[0:1,6]
     EnergySize      = int(sheetX.ix[0:0,1])
     #
-    DoseTypes_Index = np.where(DoseTypes == DoseType)[0]+1
     Organs_Index = np.where(Organs == Organ)[0]+1
     Genders_Index = np.where(Genders == Gender)[0]+1
     QualityFactors_Index = np.where(QualityFactors == QualityFactor)[0]+1
@@ -23,7 +22,7 @@ def DDCC_Proton(DoseType='Dose equivalent',QualityFactor='ICRP60',Geom='ISO',Org
     else:
         gray_index   = (Organs_Index[0])*6+(Genders_Index[0])*3+1-10-2
         factor_index = (Organs_Index[0])*6+(Genders_Index[0])*3+1+QualityFactors_Index[0]-10-2
-    print gray_index,factor_index
+    #print gray_index,factor_index
 
     sheetX = xls.parse(1)  # proton
 
@@ -32,29 +31,20 @@ def DDCC_Proton(DoseType='Dose equivalent',QualityFactor='ICRP60',Geom='ISO',Org
     absorbed_dose = sheetX.ix[:,gray_index]
 
     factor = sheetX.ix[0:EnergySize, factor_index]
-    if DoseTypes_Index[0]==3:
-        #有效剂量=吸收剂量×品质因子
-        Dose_equivalent = absorbed_dose*factor
-        print Dose_equivalent
-        return Energy, absorbed_dose
-    elif DoseTypes_Index[0]==1:
-        #吸收剂量
-        return Energy,absorbed_dose
-    elif DoseTypes_Index[0]==1:
+
         #品质因子
-        return Energy, factor
-def DDCC_Neutron(DoseType='Dose equivalent',QualityFactor='ICRP60',Geom='Ap',Organ='Thymus',Gender='Female'):
+    return Energy, absorbed_dose,factor
+def DDCC_Neutron(QualityFactor='ICRP60',Geom='Ap',Organ='Thymus',Gender='Female'):
 
     xls = pd.ExcelFile("ICRP123/neutron.xls")
     sheetX = xls.parse(0) #data
-    DoseTypes       = sheetX.ix[0:2,2]
+
     QualityFactors  = sheetX.ix[0:1,3]
     Geoms           = sheetX.ix[0:5,4]
     Organs          = sheetX.ix[0:30,5]
     Genders         = sheetX.ix[0:1,6]
     EnergySize      = int(sheetX.ix[0:0,1])
     #
-    DoseTypes_Index = np.where(DoseTypes == DoseType)[0]+1
     Organs_Index = np.where(Organs == Organ)[0]+1
     Genders_Index = np.where(Genders == Gender)[0]+1
     QualityFactors_Index = np.where(QualityFactors == QualityFactor)[0]+1
@@ -65,7 +55,7 @@ def DDCC_Neutron(DoseType='Dose equivalent',QualityFactor='ICRP60',Geom='Ap',Org
     else:
         gray_index   = (Organs_Index[0])*6+(Genders_Index[0])*3+1-10-2
         factor_index = (Organs_Index[0])*6+(Genders_Index[0])*3+1+QualityFactors_Index[0]-10-2
-    print gray_index,factor_index
+    #print gray_index,factor_index
 
     sheetX = xls.parse(1)  # proton
 
@@ -74,30 +64,19 @@ def DDCC_Neutron(DoseType='Dose equivalent',QualityFactor='ICRP60',Geom='Ap',Org
     absorbed_dose = sheetX.ix[:,gray_index]
 
     factor = sheetX.ix[0:EnergySize, factor_index]
-    if DoseTypes_Index[0]==3:
-        #有效剂量=吸收剂量×品质因子
-        Dose_equivalent = absorbed_dose*factor
-        return Energy, absorbed_dose
-    elif DoseTypes_Index[0]==1:
-        #吸收剂量
-        return Energy,absorbed_dose
-    elif DoseTypes_Index[0]==1:
-        #品质因子
-        return Energy, factor
+    return Energy, absorbed_dose, factor
 
-def DDCC_Ion(DoseType='Dose equivalent',QualityFactor='ICRP60',Geom='Ap',Organ='Thymus',Gender='Female',particleName='He4'):
+def DDCC_Ion(QualityFactor='ICRP60',Geom='Ap',Organ='Thymus',Gender='Female',particleName='He4'):
 
     xls = pd.ExcelFile("ICRP123/ion.xls")
     sheetX = xls.parse(0) #data
     EnergySize = int(sheetX.ix[0:0,1])
-    DoseTypes       = sheetX.ix[0:2,2]
     QualityFactors  = sheetX.ix[0:1,3]
     Particles       = sheetX.ix[0:27,4]
     Organs          = sheetX.ix[0:30,5]
     Genders         = sheetX.ix[0:1, 6]
 
     #
-    DoseTypes_Index = np.where(DoseTypes == DoseType)[0]+1
     Organs_Index = np.where(Organs == Organ)[0]+1
     Genders_Index = np.where(Genders == Gender)[0]+1
     QualityFactors_Index = np.where(QualityFactors == QualityFactor)[0]+1
@@ -119,30 +98,21 @@ def DDCC_Ion(DoseType='Dose equivalent',QualityFactor='ICRP60',Geom='Ap',Organ='
     absorbed_dose = sheetX.ix[:,gray_index]
 
     factor = sheetX.ix[0:EnergySize, factor_index]
-    if DoseTypes_Index[0]==3:
-        #有效剂量=吸收剂量×品质因子
-        Dose_equivalent = absorbed_dose*factor
-        print Dose_equivalent
-        return Energy, absorbed_dose
-    elif DoseTypes_Index[0]==1:
-        #吸收剂量
-        return Energy,absorbed_dose
-    elif DoseTypes_Index[0]==1:
-        #品质因子
-        return Energy, factor
-def DDCC_Pion(DoseType='Dose equivalent',QualityFactor='ICRP60',Geom='Ap',Organ='Liver',Gender='Male',particleName='Positive pion'):
+    return Energy, absorbed_dose, factor
+
+def DDCC_Pion(QualityFactor='ICRP60',Geom='Ap',Organ='Liver',Gender='Male',particleName='Positive pion'):
 
     xls = pd.ExcelFile("ICRP123/pion.xls")
     sheetX = xls.parse(0) #data
     EnergySize = int(sheetX.ix[0:0,1])
-    DoseTypes       = sheetX.ix[0:2,2]
+
     QualityFactors  = sheetX.ix[0:1,3]
     Particles       = sheetX.ix[0:27,4]
     Organs          = sheetX.ix[0:30,5]
     Genders         = sheetX.ix[0:1, 6]
 
     #
-    DoseTypes_Index = np.where(DoseTypes == DoseType)[0]+1
+
     Organs_Index = np.where(Organs == Organ)[0]+1
     Genders_Index = np.where(Genders == Gender)[0]+1
     QualityFactors_Index = np.where(QualityFactors == QualityFactor)[0]+1
@@ -164,15 +134,5 @@ def DDCC_Pion(DoseType='Dose equivalent',QualityFactor='ICRP60',Geom='Ap',Organ=
     absorbed_dose = sheetX.ix[:,gray_index]
 
     factor = sheetX.ix[0:EnergySize, factor_index]
-    if DoseTypes_Index[0]==3:
-        #有效剂量=吸收剂量×品质因子
-        Dose_equivalent = absorbed_dose*factor
-        print Dose_equivalent
-        return Energy, absorbed_dose
-    elif DoseTypes_Index[0]==1:
-        #吸收剂量
-        return Energy,absorbed_dose
-    elif DoseTypes_Index[0]==1:
-        #品质因子
-        return Energy, factor
-DDCC_Pion()
+    return Energy, absorbed_dose, factor
+#DDCC_Pion()
